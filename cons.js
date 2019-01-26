@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
+const util = require("./util");
+const world = require("./world");
+
 const CONS_PATH = path.join(__dirname, "cons");
 
 let users = {};
@@ -9,6 +12,21 @@ function userInputHandler(userId, data) {
   console.log("%d: %s", userId, data.toString("utf8"));
   if (!users[userId]) console.error("user not ready!");
   users[userId].streamOut.write("+" + data.toString("utf8"), "utf8");
+}
+
+function userJoined(userId) {
+  let char = util.randomChoice("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  let startRealm = "city";
+  let spawnPoint = world.getPlayerSpawn(startRealm);
+  let entity = world.createEntity(
+    startRealm,
+    "player",
+    char,
+    "blue",
+    spawnPoint.x,
+    spawnPoint.y
+  );
+  users[userId].entity = entity.id;
 }
 
 function checkForPipes() {
@@ -41,6 +59,7 @@ function checkForPipes() {
 
         if (users[userId].streamIn && users[userId].streamOut) {
           users[userId].ready = true;
+          userJoined(userId);
         }
       }
     });

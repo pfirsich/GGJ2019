@@ -11,10 +11,10 @@
 #                                                                                                                                                    #
 #                                                                                                                                                    #
 W                   S S                          G                                    S S          ##########                                        #
-W                                                                                                  # V      #                                        #
-W                                                                                                  #        #                                        #
-W                                                                                                  #        #                                        #
-#                                                                                                  #        #                                        #
+W                                                                                                  #.V......#                                        #
+W                                                                                                  #........#                                        #
+W                                                                                                  #........#                                        #
+#                                                                                                  #........#                                        #
 #                                                                                      S           ####  ####                                        #
 #                 S                                                                    S                                                             #
 #                 S                                                                                                                                  #
@@ -26,10 +26,44 @@ W                                                                               
 #                                                                       G                                                                            #
 ##################################UUUU######################################################################TTTT######################################
 
-key=value
-!W=portal,/home
-!U=portal,/bin
-!T=portal,/usr
-!V=npc,tavernkeeper
-!H=npc,hobo
-!G=npc,guard
+{
+    'background': 'grey'
+    "spawn": " "
+}
+
+{
+    '#': {
+        type: 'wall',
+        color: 'dgrey'
+    },
+    ' ': {
+        type: 'ground',
+        color: 'dgrey'
+    },
+    '.': {
+        type: "floor",
+        character: null,
+        bgcolor: "lbrown"
+    },
+    'S': [
+        {
+            type: "playerSpawn",
+            character: null
+        },
+        {
+            fallthrough: " "
+        }
+    ],
+    'W': {
+        type: "teleport",
+        character: "T",
+        color: "yellow",
+        path: "/home"
+    },
+    'U': {
+        type: "teleport",
+        character: "T",
+        color: "yellow",
+        path: "/bin"
+    }
+}
