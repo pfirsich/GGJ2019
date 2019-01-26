@@ -1,0 +1,5 @@
+AllowUsers root
+AllowUsers player
+
+Match User player
+    PasswordAuthentication yes
