@@ -11,16 +11,15 @@ printf '.'
 sleep .5
 printf '.'
 
-rm -r ./cons
+user_name=$(./random-user-id.js)
+
 mkdir ./cons
-mkfifo ./cons/out
-mkfifo ./cons/in
+mkfifo "./cons/$user_name-out"
+mkfifo "./cons/$user_name-in"
 
 echo
-sleep .8
+sleep .3
 echo
-
-node ./main.js &
 
 echo "Logged in"
 
