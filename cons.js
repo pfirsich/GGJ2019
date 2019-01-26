@@ -5,13 +5,34 @@ const util = require("./util");
 const world = require("./world");
 
 const CONS_PATH = path.join(__dirname, "cons");
+const SIGNAL_PATTERN = /^<==>(.+?):(.+?)\.(.*)/;
 
-let users = {};
+const users = {};
 
 function userInputHandler(userId, data) {
-  console.log("%d: %s", userId, data.toString("utf8"));
+  const match = data.match(SIGNAL_PATTERN);
+  if (match) {
+    const [, type, payload, rest] = match;
+
+    userSignalHandler(userId, type, payload);
+
+    if (rest) {
+      userInputHandler(userId, rest);
+    }
+    return;
+  }
+
+  console.log("%d: %s", userId);
   if (!users[userId]) console.error("user not ready!");
-  users[userId].streamOut.write("+" + data.toString("utf8"), "utf8");
+  users[userId].streamOut.write("+" + data, "utf8");
+}
+
+function userSignalHandler(userId, type, payload) {
+  if (type === "size") {
+    const [rows, cols] = payload.split(",");
+    users[userId].rows = rows;
+    users[userId].cols = cols;
+  }
 }
 
 function userJoined(userId) {
@@ -46,9 +67,8 @@ function checkForPipes() {
           users[userId].streamIn = fs.createReadStream(
             path.join(CONS_PATH, pipeName)
           );
-          users[userId].streamIn.on(
-            "data",
-            userInputHandler.bind(null, userId)
+          users[userId].streamIn.on("data", data =>
+            userInputHandler(userId, data.toString("utf8"))
           );
         } else if (pipeType == "out" && !users[userId].streamOut) {
           console.log("create streamOut");
@@ -73,4 +93,4 @@ function watch() {
   }, 250);
 }
 
-module.exports = { watch };
+module.exports = { watch, users };

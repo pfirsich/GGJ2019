@@ -2,15 +2,19 @@
 
 const fs = require("fs");
 
+const SIGNAL_TOKEN = "<==>";
+
 const pipeNameIn = process.argv[2];
-const streanIn = fs.createWriteStream(pipeNameIn);
+const streamIn = fs.createWriteStream(pipeNameIn);
 process.stdin.setRawMode(true);
-process.stdin.on("data", data => {
-  streanIn.write(data);
-});
+process.stdin.pipe(streamIn);
 
 const pipeNameOut = process.argv[3];
-const streanOut = fs.createReadStream(pipeNameOut);
-streanOut.on("data", data => {
-  process.stdout.write(data);
-});
+const streamOut = fs.createReadStream(pipeNameOut);
+streamOut.pipe(process.stdout);
+
+signal("size", `${process.stdout.columns},${process.stdout.rows}`);
+
+function signal(type, payload) {
+  streamIn.write(`${SIGNAL_TOKEN}${type}:${payload}.`, "utf8");
+}
