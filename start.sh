@@ -23,5 +23,4 @@ echo
 
 echo "Logged in"
 
-cat ./cons/$user_name-out &
-./piper.js ./cons/$user_name-in
+./piper.js ./cons/$user_name-in ./cons/$user_name-out

@@ -8,7 +8,7 @@ let users = {};
 function userInputHandler(userId, data) {
   console.log("%d: %s", userId, data.toString("utf8"));
   if (!users[userId]) console.error("user not ready!");
-  users[userId].streamOut.write("Pong", "utf8");
+  users[userId].streamOut.write("+" + data.toString("utf8"), "utf8");
 }
 
 function checkForPipes() {
