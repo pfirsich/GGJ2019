@@ -27,40 +27,37 @@ W                                                                               
 ##################################UUUU######################################################################TTTT######################################
 
 {
-    'background': 'grey'
-    "spawn": " "
+    "bgColor": "grey"
 }
 
 {
-    '#': {
-        type: 'wall',
-        color: 'dgrey'
+    "#": {
+        type: "wall",
+        color: "dgrey"
     },
-    ' ': {
-        type: 'ground',
-        color: 'dgrey'
+    " ": {
+        type: "ground",
+        color: "dgrey"
     },
-    '.': {
+    ".": {
         type: "floor",
         character: null,
-        bgcolor: "lbrown"
+        bgColor: "lbrown"
     },
-    'S': [
+    "S": [
         {
             type: "playerSpawn",
             character: null
         },
-        {
-            fallthrough: " "
-        }
+        " "
     ],
-    'W': {
+    "W": {
         type: "teleport",
         character: "T",
         color: "yellow",
         path: "/home"
     },
-    'U': {
+    "U": {
         type: "teleport",
         character: "T",
         color: "yellow",

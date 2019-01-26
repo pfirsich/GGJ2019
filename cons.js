@@ -26,7 +26,7 @@ function userJoined(userId) {
     spawnPoint.x,
     spawnPoint.y
   );
-  users[userId].entity = entity.id;
+  users[userId].entityId = entity.id;
 }
 
 function checkForPipes() {
