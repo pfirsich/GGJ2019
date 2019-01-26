@@ -2,26 +2,26 @@
 
 echo "== ArbitraryComplexit =="
 echo
-sleep .6
+# sleep .6
 
 printf "Creating session"
 printf '.'
-sleep .5
+# sleep .5
 printf '.'
-sleep .5
+# sleep .5
 printf '.'
 
 user_name=$(./random-user-id.js)
 
-mkdir ./cons
+mkdir -p ./cons
 mkfifo "./cons/$user_name-out"
 mkfifo "./cons/$user_name-in"
 
 echo
-sleep .3
+# sleep .4
 echo
 
 echo "Logged in"
 
-cat ./cons/out &
-cat /dev/stdin > ./cons/in
+cat ./cons/$user_name-out &
+./piper.js ./cons/$user_name-in
