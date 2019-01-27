@@ -131,7 +131,10 @@ function teleportEntity(entity, destRealmName) {
   entity.y = spawnPoint.y;
 
   filterEntityFromMap(oldRealmName, oldY, oldX, entity.id);
+  world[oldRealmName].entities.filter(entityId => entityId !== entity.id);
+
   pushIntoEntityMap(destRealmName, entity.x, entity.y, entity.id);
+  world[destRealmName].entities.push(entity.id);
 
   updateMapTile(destRealmName, entity.x, entity.y);
   updateMapTile(oldRealmName, oldX, oldY);
