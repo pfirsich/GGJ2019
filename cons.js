@@ -108,6 +108,11 @@ function userJoined(userId) {
   users[userId].entityId = entity.id;
 }
 
+function userLeft(userId) {
+  world.removeEntity(users[userId].entityId);
+  delete users[userId];
+}
+
 function checkForPipes() {
   fs.readdir(CONS_PATH, (err, files) => {
     files.forEach(pipeName => {
@@ -131,6 +136,7 @@ function checkForPipes() {
           users[userId].streamIn.on("error", error => {
             console.log("con:error", error);
             users[userId].streamIn.close();
+            userLeft(userId);
           });
         } else if (pipeType == "out" && !users[userId].streamOut) {
           console.log("cons:streams:create-out");
@@ -140,6 +146,7 @@ function checkForPipes() {
           users[userId].streamOut.on("error", error => {
             console.log("con:error", error);
             users[userId].streamOut.close();
+            userLeft(userId);
           });
         }
 

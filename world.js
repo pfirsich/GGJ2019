@@ -34,6 +34,13 @@ let createEntity;
   };
 }
 
+function removeEntity(entityId) {
+  const entity = getEntityById(entityId);
+  filterEntityFromMap(entity.realmName, entity.y, entity.x, entity.id);
+  world[entity.realmName].entities.filter(entityId => entityId !== entity.id);
+  delete entityIdMap[entity.id];
+}
+
 function getPlayerSpawnPoint(realmName, sourceRealm) {
   if (sourceRealm) {
     let entities = getEntityByType(realmName, "teleport");
@@ -245,3 +252,4 @@ module.exports.moveEntity = moveEntity;
 module.exports.getEntityCollision = getEntityCollision;
 module.exports.updateMapTile = updateMapTile;
 module.exports.teleportEntity = teleportEntity;
+module.exports.removeEntity = removeEntity;
