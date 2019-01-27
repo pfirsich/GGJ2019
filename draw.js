@@ -2,8 +2,8 @@ const chalk = require("chalk");
 
 const { users, getEntityById, getRealmSize } = require("./data");
 
-let TOP_HUD_SIZE = 4;
-let BOTTOM_HUD_SIZE = 4;
+let TOP_HUD_SIZE = 0;
+let BOTTOM_HUD_SIZE = 0;
 
 const colors = {
   brown: "#ce802b",
@@ -77,13 +77,13 @@ function drawHudLine(streamOut, len) {
   }
 }
 
-function drawTopHud(user) {
-  for (let y = 1; y <= TOP_HUD_SIZE; y++) {
-    setCursor(user.streamOut, 0, y + 1);
-  }
-  setCursor(user.streamOut, 0, TOP_HUD_SIZE);
-  drawHudLine(user.streamOut, user.cols);
-}
+// function drawTopHud(user) {
+//   for (let y = 1; y <= TOP_HUD_SIZE; y++) {
+//     setCursor(user.streamOut, 0, y + 1);
+//   }
+//   setCursor(user.streamOut, 0, TOP_HUD_SIZE);
+//   drawHudLine(user.streamOut, user.cols);
+// }
 
 function drawBottomHud(user) {
   setCursor(user.streamOut, 0, user.rows - BOTTOM_HUD_SIZE + 1);
@@ -94,8 +94,8 @@ function drawBottomHud(user) {
 }
 
 function drawHud(user) {
-  drawTopHud(user);
-  drawBottomHud(user);
+  // drawTopHud(user);
+  // drawBottomHud(user);
 }
 
 function sendView(user, view) {
