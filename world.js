@@ -68,7 +68,7 @@ function moveEntity(entity, newX, newY) {
   entity.x = newX;
   entity.y = newY;
 
-  entityMap[realmName][oldX][oldY] = entityMap[realmName][oldX][oldY].filter(
+  entityMap[realmName][oldY][oldX] = entityMap[realmName][oldY][oldX].filter(
     id => id != entity.id
   );
   pushIntoEntityMap(realmName, newX, newY, entity.id);
@@ -176,3 +176,4 @@ module.exports.init = init;
 module.exports.createEntity = createEntity;
 module.exports.getEntityByLocation = getEntityByLocation;
 module.exports.getPlayerSpawnPoint = getPlayerSpawnPoint;
+module.exports.moveEntity = moveEntity;

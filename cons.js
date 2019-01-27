@@ -1,15 +1,16 @@
 const fs = require("fs");
 const path = require("path");
 
-const { users } = require("./data");
+const { users, getEntityById } = require("./data");
 const world = require("./world");
 const util = require("./util");
 
 const CONS_PATH = path.join(__dirname, "cons");
 const SIGNAL_PATTERN = /^<==>(.+?):(.+?)\.(.*)/;
+const ESC_PATTERN = /^\u001b\[(.)(.*)/;
 
 function userInputHandler(userId, data) {
-  const match = data.match(SIGNAL_PATTERN);
+  let match = data.match(SIGNAL_PATTERN);
   if (match) {
     const [, type, payload, rest] = match;
 
@@ -21,7 +22,29 @@ function userInputHandler(userId, data) {
     return;
   }
 
-  console.log("%d: %s", userId);
+  match = data.match(ESC_PATTERN);
+  if (match) {
+    console.log("esc");
+    const [, char, rest] = match;
+    const e = getEntityById(users[userId].entityId);
+
+    if (char === "A") {
+      world.moveEntity(e, e.x, e.y - 1);
+    } else if (char === "B") {
+      world.moveEntity(e, e.x, e.y + 1);
+    } else if (char === "C") {
+      world.moveEntity(e, e.x + 1, e.y);
+    } else if (char === "D") {
+      world.moveEntity(e, e.x - 1, e.y);
+    }
+
+    if (rest) {
+      userInputHandler(userId, rest);
+    }
+    return;
+  }
+
+  console.log("%d: %s", userId, data);
   if (!users[userId]) console.error("user not ready!");
 }
 
