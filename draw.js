@@ -13,6 +13,10 @@ function setMap(realmName, x, y, bgColor, color, character) {
 
   dirtyTiles.push({ realmName, x, y });
 
+  queueDrawCheck();
+}
+
+function queueDrawCheck() {
   if (!redrawPending) {
     console.log("draw:queue-check");
     setTimeout(checkRedraw, 50);
@@ -32,10 +36,15 @@ function viewIsDirty(view) {
   });
 }
 
+function clearScreen(streamOut) {
+  streamOut.write(`\u001b[2J`, "utf8");
+}
+
 function sendView(streamOut, view) {
   let realmSize = getRealmSize(view.realmName);
   let right = Math.min(realmSize.x, view.right);
   let bottom = Math.min(realmSize.y, view.bottom);
+  streamOut.write(`\u001b[${0};${0}H`, "utf8");
   for (let y = view.top; y < bottom; y++) {
     for (let x = view.left; x < right; x++) {
       if (!mapBuffer[view.realmName][y] || !mapBuffer[view.realmName][y][x]) {
@@ -43,6 +52,9 @@ function sendView(streamOut, view) {
       }
       let character = mapBuffer[view.realmName][y][x].character || " ";
       streamOut.write(character, "utf8");
+    }
+    if (y < bottom - 1) {
+      streamOut.write("\n", "utf8");
     }
   }
 }
@@ -65,7 +77,12 @@ function checkRedraw() {
     view.right = view.left + user.cols;
     view.bottom = view.top + user.rows;
 
-    if (viewIsDirty(view)) {
+    if (user.needsFullDraw || viewIsDirty(view)) {
+      if (user.needsFullDraw) {
+        console.log("draw:clear", user.id);
+        clearScreen(user.streamOut);
+        user.needsFullDraw = false;
+      }
       console.log("draw:send-view", user.id);
       sendView(user.streamOut, view);
     }
@@ -76,4 +93,4 @@ function checkRedraw() {
   dirtyTiles = [];
 }
 
-module.exports = { setMap };
+module.exports = { setMap, queueDrawCheck };

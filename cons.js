@@ -3,6 +3,7 @@ const path = require("path");
 
 const { users, getEntityById } = require("./data");
 const world = require("./world");
+const draw = require("./draw");
 const util = require("./util");
 
 const CONS_PATH = path.join(__dirname, "cons");
@@ -52,6 +53,7 @@ function userInputHandler(userId, data) {
       let teleporter = getEntityById(teleportCollisions[0]);
       let destRealm = teleporter.properties.destination;
       world.teleportEntity(e, destRealm);
+      users[userId].needsFullDraw = true;
     }
 
     if (rest) {
@@ -68,6 +70,9 @@ function userSignalHandler(userId, type, payload) {
     const [rows, cols] = payload.split(",");
     users[userId].rows = parseInt(rows, 10);
     users[userId].cols = parseInt(cols, 10);
+
+    users[userId].needsFullDraw = true;
+    draw.queueDrawCheck();
 
     console.log(
       "cons:signal:term-size",
@@ -106,7 +111,7 @@ function checkForPipes() {
         let [, userId, pipeType] = matchResult;
 
         if (!users[userId]) {
-          users[userId] = { id: userId, ready: false };
+          users[userId] = { id: userId, ready: false, needsFullDraw: false };
         }
 
         if (pipeType == "in" && !users[userId].streamIn) {
@@ -130,6 +135,7 @@ function checkForPipes() {
           users[userId].streamOut
         ) {
           users[userId].ready = true;
+          users[userId].needsFullDraw = true;
           userJoined(userId);
         }
       }
