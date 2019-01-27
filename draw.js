@@ -133,6 +133,8 @@ function sendView(user, view) {
     cursorY++;
   }
 
+  setCursor(user.streamOut, user.cols, user.rows);
+
   drawHud(user);
 }
 

@@ -12,7 +12,6 @@ sleep .6
 clear
 
 GREEM='\033[0;32m'
-CYAN='\033[0;36m'
 NC='\033[0m'
 
 echo
@@ -33,8 +32,6 @@ echo "                                |__|                            |_____|"
 
 echo
 echo
-
-printf "${CYAN}"
 
 sleep .4
 
