@@ -38,16 +38,18 @@ W                                                                               
 ##################################UUUU###################################################################################################TTTT######################################
 
 {
+    "name": "/",
     "bgColor": "grey"
 }
 
 {
     "#": {
         "type": "wall",
-        "color": "dgrey"
+        "color": "dgrey",
+        "solid": true
     },
     " ": {
-        "type": "ground",
+        "type": "floor",
         "color": "dgrey"
     },
     ".": {
@@ -65,54 +67,57 @@ W                                                                               
     "T": {
         "type": "teleport",
         "color": "yellow",
-        "path": "/mnt"
+        "destination": "/mnt"
     },
     "W": {
         "type": "teleport",
         "character": "T",
         "color": "yellow",
-        "path": "/home"
+        "destination": "dungeon"
     },
     "U": {
         "type": "teleport",
         "character": "T",
         "color": "yellow",
-        "path": "/bin"
+        "destination": "/bin"
     },
     "N": {
         "type": "teleport",
         "character": "T",
         "color": "yellow",
-        "path": "/src"
+        "destination": "/src"
     },
     "H": {
         "type": "teleport",
         "character": "T",
         "color": "yellow",
-        "path": "/root"
+        "destination": "/root"
     },
     "O": {
         "type": "teleport",
         "character": "T",
         "color": "yellow",
-        "path": "/srv"
+        "destination": "/srv"
     },
     "H": {
         "type": "teleport",
         "character": "T",
         "color": "yellow",
-        "path": "/root"
+        "destination": "/root"
     },
     "G": {
         "type": "npc",
-        "color": "yellow"
+        "color": "yellow",
+        "solid": true
     },
     "V": {
         "type": "npc",
-        "color": "green"
+        "color": "green",
+        "solid": true
     },
     "H": {
         "type": "npc",
-        "color": "yellow"
+        "color": "yellow",
+        "solid": true
     }
 }

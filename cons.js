@@ -38,6 +38,18 @@ function userInputHandler(userId, data) {
       world.moveEntity(e, e.x - 1, e.y);
     }
 
+    let teleportCollisions = world.getEntityCollision(e.x, e.y, "teleport");
+    if (teleportCollisions.length) {
+      if (teleportCollisions.length > 1)
+        throw new Error("Collision with multiple teleports");
+      let teleporter = getEntityById(teleportCollisions[0]);
+      let destRealm = teleporter.properties.destination;
+      let spawnPoint = world.getPlayerSpawnPoint(destRealm);
+      e.realmName = destRealm;
+      e.x = spawnPoint.x;
+      e.y = spawnPoint.y;
+    }
+
     if (rest) {
       userInputHandler(userId, rest);
     }
@@ -75,7 +87,8 @@ function userJoined(userId) {
     spawnPoint.y,
     {
       character,
-      color: "blue"
+      color: "blue",
+      solid: true
     }
   );
   users[userId].entityId = entity.id;

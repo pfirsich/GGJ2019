@@ -36,6 +36,13 @@ function getPlayerSpawnPoint(realmName) {
   return util.randomChoice(world[realmName].spawnPoints);
 }
 
+function getEntityCollision(realmName, x, y, type = undefined) {
+  let entities = getEntityByLocation(realmName, x, y);
+  return entities.filter(
+    entityId => !type || getEntityById(entityId).type == type
+  );
+}
+
 function getEntityByLocation(realmName, x, y, range = 0) {
   let entities = [];
   for (let cy = y - range; cy < y + range + 1; cy++) {
@@ -59,11 +66,19 @@ function pushIntoEntityMap(realmName, x, y, id) {
   entityMap[realmName][y][x].push(id);
 }
 
+function isTileWalkable(realmName, x, y) {
+  let entities = getEntityByLocation(realmName, x, y);
+  return entities.every(entity => !entity.properties.solid);
+}
+
 function moveEntity(entity, newX, newY) {
   const oldX = entity.x;
   const oldY = entity.y;
-
   const realmName = entity.realmName;
+
+  if (!isTileWalkable(realmName, newX, newY)) {
+    return;
+  }
 
   entity.x = newX;
   entity.y = newY;
@@ -177,3 +192,4 @@ module.exports.createEntity = createEntity;
 module.exports.getEntityByLocation = getEntityByLocation;
 module.exports.getPlayerSpawnPoint = getPlayerSpawnPoint;
 module.exports.moveEntity = moveEntity;
+module.exports.getEntityCollision = getEntityCollision;

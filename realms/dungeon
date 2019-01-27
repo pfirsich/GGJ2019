@@ -1,0 +1,50 @@
+###########################################################
+#                                                         #
+#                                                         #
+#                                                         #
+#                                 E                       #
+#                                                         #
+I                 #####         E                         O
+I                 #####                                   O
+I                 #####      E                            O
+I                 #####                                   O
+#                                                         #
+#                                                         #
+#                                                         #
+#                                                         #
+#                                                         #
+###########################################################
+
+{
+    "name": "/home",
+    "bgColor": "dgrey"
+}
+
+{
+    "#": {
+        "type": "wall",
+        "color": "brown"
+    },
+    " ": {
+        "type": "floor"
+    },
+    "O": {
+        "type": "teleport",
+        "color": "yellow",
+        "destination": "dungeon_room2"
+    },
+    "I": [
+        {
+            "type": "playerSpawn",
+            "character": null
+        },
+        " "
+    ],
+    "E": [
+        {
+            "type": "enemySpawn",
+            "enemyType": "foo"
+        },
+        " "
+    ]
+}
