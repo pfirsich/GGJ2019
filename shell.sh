@@ -1,6 +1,9 @@
 #!/bin/sh
 
-echo "== ArbitraryComplexit =="
+clear
+
+echo
+echo "== Arbitrary Complexity =="
 echo
 sleep .2
 
@@ -10,12 +13,12 @@ mkdir -p ./cons
 mkfifo "./cons/$user_name-out"
 mkfifo "./cons/$user_name-in"
 
-printf "Creating session"
+printf "Wating for connection"
 printf '.'
-sleep .5
+sleep .3
 printf '.'
-sleep .5
+sleep .3
 echo '.'
-
+sleep .4
 
 ./piper.js ./cons/$user_name-in ./cons/$user_name-out
