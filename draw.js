@@ -52,12 +52,18 @@ function clearScreen(streamOut) {
   streamOut.write(`\u001b[2J`, "utf8");
 }
 
-function sendView(streamOut, view) {
+function sendView(user, view) {
   let realmSize = getRealmSize(view.realmName);
   let right = Math.min(realmSize.x, view.right);
   let bottom = Math.min(realmSize.y, view.bottom);
-  streamOut.write(`\u001b[${0};${0}H`, "utf8");
+  let cursorX = 0;
+  if (realmSize.x < view.right - view.left)
+    cursorX = Math.floor(user.cols / 2) - Math.floor(realmSize.x / 2);
+  let cursorY = 0;
+  if (realmSize.y < view.bottom - view.top)
+    cursorY = Math.floor(user.rows / 2) - Math.floor(realmSize.y / 2);
   for (let y = view.top; y < bottom; y++) {
+    user.streamOut.write(`\u001b[${cursorY};${cursorX}H`, "utf8");
     for (let x = view.left; x < right; x++) {
       if (!mapBuffer[view.realmName][y] || !mapBuffer[view.realmName][y][x]) {
         throw new Error(`Out of bounds ${x}, ${y}, ${view}`);
@@ -75,11 +81,9 @@ function sendView(streamOut, view) {
         }
       }
 
-      streamOut.write(seq, "utf8");
+      user.streamOut.write(seq, "utf8");
     }
-    if (y < bottom - 1) {
-      streamOut.write("\n", "utf8");
-    }
+    cursorY++;
   }
 }
 
@@ -108,7 +112,7 @@ function checkRedraw() {
         user.needsFullDraw = false;
       }
       console.log("draw:send-view", user.id);
-      sendView(user.streamOut, view);
+      sendView(user, view);
     }
   });
 
