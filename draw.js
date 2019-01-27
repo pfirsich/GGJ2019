@@ -2,6 +2,9 @@ const chalk = require("chalk");
 
 const { users, getEntityById, getRealmSize } = require("./data");
 
+let TOP_HUD_SIZE = 4;
+let BOTTOM_HUD_SIZE = 4;
+
 const colors = {
   brown: "#ce802b",
   dgrey: "#4c4c4c",
@@ -53,18 +56,61 @@ function clearScreen(streamOut) {
   streamOut.write(`\u001b[2J`, "utf8");
 }
 
+function getGameViewSize(user) {
+  return {
+    x: user.cols,
+    y: user.rows - TOP_HUD_SIZE - BOTTOM_HUD_SIZE
+  };
+}
+
+function setCursor(streamOut, x, y) {
+  streamOut.write(`\u001b[${y};${x}H`, "utf8");
+}
+
+function drawHudLine(streamOut, len) {
+  for (let x = 0; x < len; x++) {
+    if (x == 0 || x == len - 1) {
+      streamOut.write("+", "utf8");
+    } else {
+      streamOut.write("-", "utf8");
+    }
+  }
+}
+
+function drawTopHud(user) {
+  for (let y = 1; y <= TOP_HUD_SIZE; y++) {
+    setCursor(user.streamOut, 0, y + 1);
+  }
+  setCursor(user.streamOut, 0, TOP_HUD_SIZE);
+  drawHudLine(user.streamOut, user.cols);
+}
+
+function drawBottomHud(user) {
+  setCursor(user.streamOut, 0, user.rows - BOTTOM_HUD_SIZE + 1);
+  drawHudLine(user.streamOut, user.cols);
+  for (let y = 2; y <= BOTTOM_HUD_SIZE; ++y) {
+    setCursor(user.streamOut, 0, user.rows - BOTTOM_HUD_SIZE + y);
+  }
+}
+
+function drawHud(user) {
+  drawTopHud(user);
+  drawBottomHud(user);
+}
+
 function sendView(user, view) {
   let realmSize = getRealmSize(view.realmName);
   let right = Math.min(realmSize.x, view.right);
   let bottom = Math.min(realmSize.y, view.bottom);
+  const gameViewSize = getGameViewSize(user);
   let cursorX = 0;
   if (realmSize.x < view.right - view.left)
-    cursorX = Math.floor(user.cols / 2) - Math.floor(realmSize.x / 2);
-  let cursorY = 0;
+    cursorX = Math.floor(gameViewSize.x / 2) - Math.floor(realmSize.x / 2);
+  let cursorY = TOP_HUD_SIZE + 1;
   if (realmSize.y < view.bottom - view.top)
-    cursorY = Math.floor(user.rows / 2) - Math.floor(realmSize.y / 2);
+    cursorY += Math.floor(gameViewSize.y / 2) - Math.floor(realmSize.y / 2);
   for (let y = view.top; y < bottom; y++) {
-    user.streamOut.write(`\u001b[${cursorY};${cursorX}H`, "utf8");
+    setCursor(user.streamOut, cursorX, cursorY);
     for (let x = view.left; x < right; x++) {
       if (!mapBuffer[view.realmName][y] || !mapBuffer[view.realmName][y][x]) {
         throw new Error(`Out of bounds ${x}, ${y}, ${view}`);
@@ -86,6 +132,8 @@ function sendView(user, view) {
     }
     cursorY++;
   }
+
+  drawHud(user);
 }
 
 function checkRedraw() {
@@ -94,17 +142,24 @@ function checkRedraw() {
     const rs = getRealmSize(entity.realmName);
 
     const view = {};
+    const gameViewSize = getGameViewSize(user);
     view.realmName = entity.realmName;
     view.left = Math.max(
-      Math.min(entity.x - Math.floor(user.cols / 2), rs.x - user.cols),
+      Math.min(
+        entity.x - Math.floor(gameViewSize.x / 2),
+        rs.x - gameViewSize.x
+      ),
       0
     );
     view.top = Math.max(
-      Math.min(entity.y - Math.floor(user.rows / 2), rs.y - user.rows),
+      Math.min(
+        entity.y - Math.floor(gameViewSize.y / 2),
+        rs.y - gameViewSize.y
+      ),
       0
     );
-    view.right = view.left + user.cols;
-    view.bottom = view.top + user.rows;
+    view.right = view.left + gameViewSize.x;
+    view.bottom = view.top + gameViewSize.y;
 
     if (user.needsFullDraw || viewIsDirty(view)) {
       if (user.needsFullDraw) {
