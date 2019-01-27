@@ -14,7 +14,7 @@ function setMap(realmName, x, y, bgColor, color, character) {
   dirtyTiles.push({ realmName, x, y });
 
   if (!redrawPending) {
-    console.log("queue redraw");
+    console.log("draw:queue-check");
     setTimeout(checkRedraw, 50);
     redrawPending = true;
   }
@@ -63,6 +63,7 @@ function checkRedraw() {
     view.bottom = view.top + user.rows;
 
     if (viewIsDirty(view)) {
+      console.log("draw:send-view", user.id);
       sendView(user.streamOut, view);
     }
   });

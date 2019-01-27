@@ -11,7 +11,6 @@ function getRealmSize(realmName) {
   if (!realmName) {
     throw new Error("No realmName");
   }
-  console.log("getRealmSize", realmName);
   return {
     x: world[realmName].cols,
     y: world[realmName].rows

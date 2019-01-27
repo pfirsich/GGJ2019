@@ -24,7 +24,6 @@ function userInputHandler(userId, data) {
 
   match = data.match(ESC_PATTERN);
   if (match) {
-    console.log("esc");
     const [, char, rest] = match;
     const e = getEntityById(users[userId].entityId);
 
@@ -44,7 +43,7 @@ function userInputHandler(userId, data) {
       e.y,
       "teleport"
     );
-    console.log(teleportCollisions);
+
     if (teleportCollisions.length) {
       if (teleportCollisions.length > 1)
         throw new Error("Collision with multiple teleports");
@@ -59,8 +58,7 @@ function userInputHandler(userId, data) {
     return;
   }
 
-  console.log("%d: %s", userId, data);
-  if (!users[userId]) console.error("user not ready!");
+  if (!users[userId]) throw new Error("cons:user-not-ready");
 }
 
 function userSignalHandler(userId, type, payload) {
@@ -70,7 +68,7 @@ function userSignalHandler(userId, type, payload) {
     users[userId].cols = parseInt(cols, 10);
 
     console.log(
-      "term size",
+      "cons:signal:term-size",
       users[userId].rows,
       users[userId].cols,
       rows,
@@ -110,7 +108,7 @@ function checkForPipes() {
         }
 
         if (pipeType == "in" && !users[userId].streamIn) {
-          console.log("create streamIn");
+          console.log("cons:streams:create-in");
           users[userId].streamIn = fs.createReadStream(
             path.join(CONS_PATH, pipeName)
           );
@@ -118,7 +116,7 @@ function checkForPipes() {
             userInputHandler(userId, data.toString("utf8"))
           );
         } else if (pipeType == "out" && !users[userId].streamOut) {
-          console.log("create streamOut");
+          console.log("cons:streams:create-out");
           users[userId].streamOut = fs.createWriteStream(
             path.join(CONS_PATH, pipeName)
           );
@@ -138,7 +136,7 @@ function checkForPipes() {
 }
 
 function watch() {
-  console.log("watching");
+  console.log("cons:watching");
   setInterval(() => {
     checkForPipes();
   }, 250);
