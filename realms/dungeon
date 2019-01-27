@@ -4,10 +4,10 @@
 #                                                         #
 #                                 E                       #
 #                                                         #
-I                 #####         E                         O
-I                 #####                                   O
-I                 #####      E                            O
-I                 #####                                   O
+O                 #####         E                         I
+O                 #####                                   I
+O                 #####      E                            I
+O                 #####                                   I
 #                                                         #
 #                                                         #
 #                                                         #
@@ -30,16 +30,16 @@ I                 #####                                   O
     },
     "O": {
         "type": "teleport",
-        "color": "yellow",
+        "character": "D",
+        "color": "dyellow",
         "destination": "dungeon_room2"
     },
-    "I": [
-        {
-            "type": "playerSpawn",
-            "character": null
-        },
-        " "
-    ],
+    "I": {
+        "type": "teleport",
+        "character": "T",
+        "color": "yellow",
+        "destination": "city"
+    },
     "E": [
         {
             "type": "enemySpawn",

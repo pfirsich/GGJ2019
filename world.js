@@ -34,8 +34,24 @@ let createEntity;
   };
 }
 
-function getPlayerSpawnPoint(realmName) {
-  return util.randomChoice(world[realmName].spawnPoints);
+function getPlayerSpawnPoint(realmName, sourceRealm) {
+  if (sourceRealm) {
+    let entities = getEntityByType(realmName, "teleport");
+    console.log(entities);
+    for (let entityId of entities) {
+      console.log(entityId, getEntityById(entityId).properties.destination);
+    }
+    entities = entities.filter(
+      entityId => getEntityById(entityId).properties.destination == sourceRealm
+    );
+    console.log(entities);
+    let enterTeleport = getEntityById(util.randomChoice(entities));
+    return { x: enterTeleport.x, y: enterTeleport.y };
+  } else {
+    if (!world[realmName].spawnPoints.length)
+      throw new Error("Spawning without source realm and without spawn point");
+    return util.randomChoice(world[realmName].spawnPoints);
+  }
 }
 
 function getEntityCollision(realmName, x, y, type = undefined) {
@@ -43,6 +59,12 @@ function getEntityCollision(realmName, x, y, type = undefined) {
   return entities.filter(
     entityId => !type || getEntityById(entityId).type === type
   );
+}
+
+function getEntityByType(realmName, type) {
+  return world[realmName].entities
+    .filter(entity => entity.type == type)
+    .map(entity => entity.id);
 }
 
 function getEntityByLocation(realmName, x, y, range = 0) {
@@ -102,7 +124,7 @@ function teleportEntity(entity, destRealmName) {
   const oldRealmName = entity.realmName;
   const oldX = entity.x;
   const oldY = entity.y;
-  const spawnPoint = getPlayerSpawnPoint(destRealmName);
+  const spawnPoint = getPlayerSpawnPoint(destRealmName, oldRealmName);
 
   entity.realmName = destRealmName;
   entity.x = spawnPoint.x;

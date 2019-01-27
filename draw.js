@@ -9,6 +9,7 @@ const colors = {
   grey: "#777777",
   lbrown: "#d19440",
   yellow: "#ffe900",
+  dyellow: "#c6b900",
   blue: "#003bff"
 };
 

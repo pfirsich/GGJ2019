@@ -10,6 +10,9 @@ const CONS_PATH = path.join(__dirname, "cons");
 const SIGNAL_PATTERN = /^<==>(.+?):(.+?)\.(.*)/;
 const ESC_PATTERN = /^\u001b\[(.)(.*)/;
 
+const TOP_HUD_SIZE = 4;
+const BOTTOM_HUD_SIZE = 4;
+
 function userInputHandler(userId, data) {
   console.log("cons:input:data", JSON.stringify(data));
 
