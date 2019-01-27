@@ -1,13 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 
-const util = require("./util");
+const { users } = require("./data");
 const world = require("./world");
+const util = require("./util");
 
 const CONS_PATH = path.join(__dirname, "cons");
 const SIGNAL_PATTERN = /^<==>(.+?):(.+?)\.(.*)/;
-
-const users = {};
 
 function userInputHandler(userId, data) {
   const match = data.match(SIGNAL_PATTERN);
@@ -24,28 +23,37 @@ function userInputHandler(userId, data) {
 
   console.log("%d: %s", userId);
   if (!users[userId]) console.error("user not ready!");
-  users[userId].streamOut.write("+" + data, "utf8");
 }
 
 function userSignalHandler(userId, type, payload) {
   if (type === "size") {
     const [rows, cols] = payload.split(",");
-    users[userId].rows = rows;
-    users[userId].cols = cols;
+    users[userId].rows = parseInt(rows, 10);
+    users[userId].cols = parseInt(cols, 10);
+
+    console.log(
+      "term size",
+      users[userId].rows,
+      users[userId].cols,
+      rows,
+      cols
+    );
   }
 }
 
 function userJoined(userId) {
-  let char = util.randomChoice("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  let character = util.randomChoice("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
   let startRealm = "city";
-  let spawnPoint = world.getPlayerSpawn(startRealm);
+  let spawnPoint = world.getPlayerSpawnPoint(startRealm);
   let entity = world.createEntity(
     startRealm,
     "player",
-    char,
-    "blue",
     spawnPoint.x,
-    spawnPoint.y
+    spawnPoint.y,
+    {
+      character,
+      color: "blue"
+    }
   );
   users[userId].entityId = entity.id;
 }
@@ -59,7 +67,7 @@ function checkForPipes() {
         let [, userId, pipeType] = matchResult;
 
         if (!users[userId]) {
-          users[userId] = { ready: false };
+          users[userId] = { id: userId, ready: false };
         }
 
         if (pipeType == "in" && !users[userId].streamIn) {
@@ -77,7 +85,11 @@ function checkForPipes() {
           );
         }
 
-        if (users[userId].streamIn && users[userId].streamOut) {
+        if (
+          !users[userId].ready &&
+          users[userId].streamIn &&
+          users[userId].streamOut
+        ) {
           users[userId].ready = true;
           userJoined(userId);
         }
@@ -93,4 +105,5 @@ function watch() {
   }, 250);
 }
 
-module.exports = { watch, users };
+module.exports.watch = watch;
+module.exports.users = users;

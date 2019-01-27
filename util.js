@@ -6,4 +6,4 @@ function ghettoCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-module.export = { randomChoice, ghettoCopy };
+module.exports = { randomChoice, ghettoCopy };

@@ -32,35 +32,76 @@ W                                                                               
 
 {
     "#": {
-        type: "wall",
-        color: "dgrey"
+        "type": "wall",
+        "color": "dgrey"
     },
     " ": {
-        type: "ground",
-        color: "dgrey"
+        "type": "ground",
+        "color": "dgrey"
     },
     ".": {
-        type: "floor",
-        character: null,
-        bgColor: "lbrown"
+        "type": "floor",
+        "character": null,
+        "bgColor": "lbrown"
     },
     "S": [
         {
-            type: "playerSpawn",
-            character: null
+            "type": "playerSpawn",
+            "character": null
         },
         " "
     ],
+    "T": {
+        "type": "teleport",
+        "color": "yellow",
+        "path": "/mnt"
+    },
     "W": {
-        type: "teleport",
-        character: "T",
-        color: "yellow",
-        path: "/home"
+        "type": "teleport",
+        "character": "T",
+        "color": "yellow",
+        "path": "/home"
     },
     "U": {
-        type: "teleport",
-        character: "T",
-        color: "yellow",
-        path: "/bin"
+        "type": "teleport",
+        "character": "T",
+        "color": "yellow",
+        "path": "/bin"
+    },
+    "N": {
+        "type": "teleport",
+        "character": "T",
+        "color": "yellow",
+        "path": "/src"
+    },
+    "H": {
+        "type": "teleport",
+        "character": "T",
+        "color": "yellow",
+        "path": "/root"
+    },
+    "O": {
+        "type": "teleport",
+        "character": "T",
+        "color": "yellow",
+        "path": "/srv"
+    },
+    "H": {
+        "type": "teleport",
+        "character": "T",
+        "color": "yellow",
+        "path": "/root"
+    },
+    "G": {
+        "type": "npc",
+        "color": "yellow"
+    },
+    "V": {
+        "type": "npc",
+        "color": "green"
+    },
+    "H": {
+        "type": "npc",
+        "color": "yellow"
     }
 }

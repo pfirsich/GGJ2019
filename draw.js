@@ -1,22 +1,75 @@
-let cons = require("./cons");
+const { users, getEntityById, getRealmSize } = require("./data");
 
-let map = {}; // map[realmId] = array of arrays of tuples (color, char)
+const mapBuffer = {}; // mapBuffer[realmName][y][x] = { bgColor, color, character }
 
 let redrawPending = false;
+let dirtyTiles = [];
 
-let colors = { white: 0xffffff };
+function setMap(realmName, x, y, bgColor, color, character) {
+  if (!mapBuffer[realmName]) mapBuffer[realmName] = {};
+  if (!mapBuffer[realmName][y]) mapBuffer[realmName][y] = {};
 
-function setMap(realmId, x, y, color, char) {
-  map[realmId][y][x] = [color, char];
+  mapBuffer[realmName][y][x] = { bgColor, color, character };
+
+  dirtyTiles.push({ realmName, x, y });
+
   if (!redrawPending) {
-    setTimeout(checkRedraw, 50.0);
+    console.log("queue redraw");
+    setTimeout(checkRedraw, 50);
     redrawPending = true;
   }
 }
 
-function checkRedraw() {
-  // for each player, check if map has to be redrawn, then send new map
-  redrawPending = false;
+function viewIsDirty(view) {
+  return dirtyTiles.some(({ realmName, x, y }) => {
+    return (
+      view.realmName === realmName &&
+      x >= view.left &&
+      y >= view.top &&
+      x <= view.right &&
+      y <= view.bottom
+    );
+  });
 }
 
-module.export = { setMap };
+function sendView(streamOut, view) {
+  for (let y = view.top; y < view.bottom; y++) {
+    for (let x = view.left; x < view.right; x++) {
+      if (!mapBuffer[view.realmName][y] || !mapBuffer[view.realmName][y][x]) {
+        throw new Error(`Out of bounds ${x}, ${y}, ${view}`);
+      }
+      let character = mapBuffer[view.realmName][y][x].character || " ";
+      streamOut.write(character, "utf8");
+    }
+  }
+}
+
+function checkRedraw() {
+  Object.values(users).forEach(user => {
+    const entity = getEntityById(user.entityId);
+    const rs = getRealmSize(entity.realmName);
+
+    const view = {};
+    view.realmName = entity.realmName;
+    view.left = Math.max(
+      Math.min(entity.x - Math.floor(user.cols / 2), rs.x - user.cols),
+      0
+    );
+    view.top = Math.max(
+      Math.min(entity.y - Math.floor(user.rows / 2), rs.y - user.rows),
+      0
+    );
+    view.right = view.left + user.cols;
+    view.bottom = view.top + user.rows;
+
+    if (viewIsDirty(view)) {
+      sendView(user.streamOut, view);
+    }
+  });
+
+  // for each player, check if mapBuffer has to be redrawn, then send new mapBuffer
+  redrawPending = false;
+  dirtyTiles = [];
+}
+
+module.exports = { setMap };
