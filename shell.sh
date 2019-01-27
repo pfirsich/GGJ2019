@@ -1,16 +1,5 @@
 #!/bin/bash
 
-printf "initializing"
-printf '.'
-sleep .3
-printf '.'
-sleep .3
-echo '.'
-sleep .6
-
-
-clear
-
 GREEM='\033[0;32m'
 NC='\033[0m'
 
