@@ -17,6 +17,10 @@ function getRealmSize(realmName) {
   };
 }
 
+function realmExists(realmName) {
+  return !!world[realmName];
+}
+
 module.exports = {
   world,
   entityIdMap,
@@ -24,5 +28,6 @@ module.exports = {
   users,
 
   getEntityById,
-  getRealmSize
+  getRealmSize,
+  realmExists
 };

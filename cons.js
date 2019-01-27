@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const { users, getEntityById } = require("./data");
+const { users, getEntityById, realmExists } = require("./data");
 const world = require("./world");
 const draw = require("./draw");
 const util = require("./util");
@@ -55,8 +55,11 @@ function userInputHandler(userId, data) {
         throw new Error("Collision with multiple teleports");
       let teleporter = getEntityById(teleportCollisions[0]);
       let destRealm = teleporter.properties.destination;
-      world.teleportEntity(e, destRealm);
-      users[userId].needsFullDraw = true;
+
+      if (realmExists(destRealm)) {
+        world.teleportEntity(e, destRealm);
+        users[userId].needsFullDraw = true;
+      }
     }
 
     if (rest) {
