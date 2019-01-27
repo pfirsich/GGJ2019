@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const jsonParse = require("json-parse-better-errors");
+
 const { world, entityMap, entityIdMap, getEntityById } = require("./data");
 
 const draw = require("./draw");
@@ -39,7 +41,7 @@ function getPlayerSpawnPoint(realmName) {
 function getEntityCollision(realmName, x, y, type = undefined) {
   let entities = getEntityByLocation(realmName, x, y);
   return entities.filter(
-    entityId => !type || getEntityById(entityId).type == type
+    entityId => !type || getEntityById(entityId).type === type
   );
 }
 
@@ -59,6 +61,12 @@ function getEntityByLocation(realmName, x, y, range = 0) {
   return entities;
 }
 
+function filterEntityFromMap(realmName, x, y, id) {
+  entityMap[realmName][x][y] = entityMap[realmName][x][y].filter(
+    _id => _id !== id
+  );
+}
+
 function pushIntoEntityMap(realmName, x, y, id) {
   if (!entityMap[realmName]) entityMap[realmName] = {};
   if (!entityMap[realmName][y]) entityMap[realmName][y] = {};
@@ -68,7 +76,7 @@ function pushIntoEntityMap(realmName, x, y, id) {
 
 function isTileWalkable(realmName, x, y) {
   let entities = getEntityByLocation(realmName, x, y);
-  return entities.every(entity => !entity.properties.solid);
+  return entities.every(entityId => !getEntityById(entityId).properties.solid);
 }
 
 function moveEntity(entity, newX, newY) {
@@ -83,13 +91,28 @@ function moveEntity(entity, newX, newY) {
   entity.x = newX;
   entity.y = newY;
 
-  entityMap[realmName][oldY][oldX] = entityMap[realmName][oldY][oldX].filter(
-    id => id != entity.id
-  );
+  filterEntityFromMap(realmName, oldY, oldX, entity.id);
   pushIntoEntityMap(realmName, newX, newY, entity.id);
 
   updateMapTile(realmName, oldX, oldY);
   updateMapTile(realmName, newX, newY);
+}
+
+function teleportEntity(entity, destRealmName) {
+  const oldRealmName = entity.realmName;
+  const oldX = entity.x;
+  const oldY = entity.y;
+  const spawnPoint = getPlayerSpawnPoint(destRealmName);
+
+  entity.realmName = destRealmName;
+  entity.x = spawnPoint.x;
+  entity.y = spawnPoint.y;
+
+  filterEntityFromMap(oldRealmName, oldY, oldX, entity.id);
+  pushIntoEntityMap(destRealmName, entity.x, entity.y, entity.id);
+
+  updateMapTile(destRealmName, entity.x, entity.y);
+  updateMapTile(oldRealmName, oldX, oldY);
 }
 
 function updateMapTile(realmName, x, y) {
@@ -160,10 +183,10 @@ function init() {
       metaDataStart +
       1;
 
-    const metaData = JSON.parse(
+    const metaData = jsonParse(
       lines.slice(metaDataStart, tileDefinitionMapStart).join("\n")
     );
-    const tileDefinitionMap = JSON.parse(
+    const tileDefinitionMap = jsonParse(
       lines.slice(tileDefinitionMapStart).join("\n")
     );
 
@@ -193,3 +216,5 @@ module.exports.getEntityByLocation = getEntityByLocation;
 module.exports.getPlayerSpawnPoint = getPlayerSpawnPoint;
 module.exports.moveEntity = moveEntity;
 module.exports.getEntityCollision = getEntityCollision;
+module.exports.updateMapTile = updateMapTile;
+module.exports.teleportEntity = teleportEntity;

@@ -38,16 +38,19 @@ function userInputHandler(userId, data) {
       world.moveEntity(e, e.x - 1, e.y);
     }
 
-    let teleportCollisions = world.getEntityCollision(e.x, e.y, "teleport");
+    let teleportCollisions = world.getEntityCollision(
+      e.realmName,
+      e.x,
+      e.y,
+      "teleport"
+    );
+    console.log(teleportCollisions);
     if (teleportCollisions.length) {
       if (teleportCollisions.length > 1)
         throw new Error("Collision with multiple teleports");
       let teleporter = getEntityById(teleportCollisions[0]);
       let destRealm = teleporter.properties.destination;
-      let spawnPoint = world.getPlayerSpawnPoint(destRealm);
-      e.realmName = destRealm;
-      e.x = spawnPoint.x;
-      e.y = spawnPoint.y;
+      world.teleportEntity(e, destRealm);
     }
 
     if (rest) {

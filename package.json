@@ -11,5 +11,8 @@
   "devDependencies": {
     "eslint": "^5.12.1",
     "eslint-config-prettier": "^4.0.0"
+  },
+  "dependencies": {
+    "json-parse-better-errors": "^1.0.2"
   }
 }
