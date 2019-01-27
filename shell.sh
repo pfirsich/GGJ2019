@@ -15,10 +15,10 @@ mkfifo "./cons/$user_name-in"
 
 printf "Wating for connection"
 printf '.'
-sleep .3
+sleep .1
 printf '.'
-sleep .3
+sleep .1
 echo '.'
-sleep .4
+sleep .2
 
 ./piper.js ./cons/$user_name-in ./cons/$user_name-out

@@ -14,7 +14,22 @@ const SIGNAL_TOKEN = "<==>";
 const pipeNameIn = process.argv[2];
 const streamIn = fs.createWriteStream(pipeNameIn);
 process.stdin.setRawMode(true);
-process.stdin.pipe(streamIn);
+
+let end = false;
+
+process.stdin.on("data", data => {
+  const text = data.toString("utf8");
+  if (text === "\u0003") {
+    process.stdin.setRawMode(false);
+    process.stdout.write(data);
+    streamOut.unpipe();
+    streamOut.close();
+    streamIn.close();
+    end = true;
+  } else if (!end) {
+    streamIn.write(data, "utf8");
+  }
+});
 streamIn.on("error", logError);
 
 const pipeNameOut = process.argv[3];
@@ -42,3 +57,8 @@ function logError(error) {
   console.log(yellow(error));
   process.exit(1);
 }
+
+process.on("SIGINT", () => {
+  console.log(yellow("SIGINT"));
+  process.exit(1);
+});
