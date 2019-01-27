@@ -15,6 +15,7 @@
     "eslint-config-prettier": "^4.0.0"
   },
   "dependencies": {
+    "chalk": "^2.4.2",
     "json-parse-better-errors": "^1.0.2"
   }
 }

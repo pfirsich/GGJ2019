@@ -1,4 +1,16 @@
+const chalk = require("chalk");
+
 const { users, getEntityById, getRealmSize } = require("./data");
+
+const colors = {
+  brown: "#ce802b",
+  dgrey: "#4c4c4c",
+  green: "#306312",
+  grey: "#777777",
+  lbrown: "#d19440",
+  yellow: "#ffe900",
+  blue: "#003bff"
+};
 
 const mapBuffer = {}; // mapBuffer[realmName][y][x] = { bgColor, color, character }
 
@@ -50,8 +62,20 @@ function sendView(streamOut, view) {
       if (!mapBuffer[view.realmName][y] || !mapBuffer[view.realmName][y][x]) {
         throw new Error(`Out of bounds ${x}, ${y}, ${view}`);
       }
-      let character = mapBuffer[view.realmName][y][x].character || " ";
-      streamOut.write(character, "utf8");
+
+      let { bgColor, color, character } = mapBuffer[view.realmName][y][x];
+      let seq = character || " ";
+
+      if (seq !== " ") {
+        // if (bgColor && colors[bgColor]) {
+        //   seq = chalk.bgHex(colors[bgColor])(seq);
+        // }
+        if (color && colors[color]) {
+          seq = chalk.hex(colors[color])(seq);
+        }
+      }
+
+      streamOut.write(seq, "utf8");
     }
     if (y < bottom - 1) {
       streamOut.write("\n", "utf8");

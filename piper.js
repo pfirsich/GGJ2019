@@ -40,4 +40,5 @@ function logError(error) {
   );
 
   console.log(yellow(error));
+  process.exit(1);
 }
