@@ -1,14 +1,24 @@
 #!/bin/bash
 
+printf "initializing"
+printf '.'
+sleep .3
+printf '.'
+sleep .3
+echo '.'
+sleep .6
+
+
 clear
 
-RED='\033[0;32m'
+GREEM='\033[0;32m'
+CYAN='\033[0;36m'
 NC='\033[0m'
 
 echo
 echo
 
-printf "${RED}"
+printf "${GREEM}"
 
 echo "    _______        __     __ __"
 echo "   |   _   |.----.|  |--.|__|  |_.----.---.-.----.--.--."
@@ -21,12 +31,12 @@ echo "         |   ---||  _  |        |  _  ||  ||  -__|_   _||  |   _|  |  |"
 echo "         |______||_____|__|__|__|   __||__||_____|__.__||__|____|___  |"
 echo "                                |__|                            |_____|"
 
-printf "${NC}"
-
 echo
 echo
 
-sleep .2
+printf "${CYAN}"
+
+sleep .4
 
 user_name=$(./random-user-id.js)
 
@@ -34,12 +44,15 @@ mkdir -p ./cons
 mkfifo "./cons/$user_name-out"
 mkfifo "./cons/$user_name-in"
 
-printf "Wating for connection"
+printf "wating for connection"
 printf '.'
-sleep .1
+sleep .3
 printf '.'
-sleep .1
+sleep .3
 echo '.'
-sleep .2
+echo
+sleep .6
+
+printf "${NC}"
 
 ./piper.js ./cons/$user_name-in ./cons/$user_name-out
