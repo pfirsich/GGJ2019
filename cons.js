@@ -10,6 +10,8 @@ const SIGNAL_PATTERN = /^<==>(.+?):(.+?)\.(.*)/;
 const ESC_PATTERN = /^\u001b\[(.)(.*)/;
 
 function userInputHandler(userId, data) {
+  console.log("cons:input:data", JSON.stringify(data));
+
   let match = data.match(SIGNAL_PATTERN);
   if (match) {
     const [, type, payload, rest] = match;
