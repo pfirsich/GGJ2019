@@ -37,6 +37,10 @@ const streamOut = fs.createReadStream(pipeNameOut);
 streamOut.pipe(process.stdout);
 streamOut.on("error", logError);
 
+process.stdout.on("resize", () => {
+  signal("size", `${process.stdout.rows},${process.stdout.columns}`);
+});
+
 signal("size", `${process.stdout.rows},${process.stdout.columns}`);
 
 function signal(type, payload) {
