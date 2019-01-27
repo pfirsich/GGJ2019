@@ -140,6 +140,10 @@ function sendView(user, view) {
 
 function checkRedraw() {
   Object.values(users).forEach(user => {
+    if (user.left) {
+      return;
+    }
+
     const entity = getEntityById(user.entityId);
     const rs = getRealmSize(entity.realmName);
 

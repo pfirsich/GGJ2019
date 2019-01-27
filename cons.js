@@ -107,7 +107,7 @@ function userJoined(userId) {
 
 function userLeft(userId) {
   world.removeEntity(users[userId].entityId);
-  delete users[userId];
+  users[userId].left = true;
 }
 
 function checkForPipes() {

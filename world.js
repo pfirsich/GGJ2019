@@ -36,9 +36,11 @@ let createEntity;
 
 function removeEntity(entityId) {
   const entity = getEntityById(entityId);
-  filterEntityFromMap(entity.realmName, entity.y, entity.x, entity.id);
-  world[entity.realmName].entities.filter(entityId => entityId !== entity.id);
-  delete entityIdMap[entity.id];
+  const { realmName, x, y } = entity;
+  filterEntityFromMap(realmName, y, x, entityId);
+  world[realmName].entities.filter(ei => ei !== entityId);
+  delete entityIdMap[entityId];
+  updateMapTile(realmName, x, y);
 }
 
 function getPlayerSpawnPoint(realmName, sourceRealm) {
