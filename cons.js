@@ -128,11 +128,19 @@ function checkForPipes() {
           users[userId].streamIn.on("data", data =>
             userInputHandler(userId, data.toString("utf8"))
           );
+          users[userId].streamIn.on("error", error => {
+            console.log("con:error", error);
+            users[userId].streamIn.close();
+          });
         } else if (pipeType == "out" && !users[userId].streamOut) {
           console.log("cons:streams:create-out");
           users[userId].streamOut = fs.createWriteStream(
             path.join(CONS_PATH, pipeName)
           );
+          users[userId].streamOut.on("error", error => {
+            console.log("con:error", error);
+            users[userId].streamOut.close();
+          });
         }
 
         if (
