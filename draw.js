@@ -33,8 +33,11 @@ function viewIsDirty(view) {
 }
 
 function sendView(streamOut, view) {
-  for (let y = view.top; y < view.bottom; y++) {
-    for (let x = view.left; x < view.right; x++) {
+  let realmSize = getRealmSize(view.realmName);
+  let right = Math.min(realmSize.x, view.right);
+  let bottom = Math.min(realmSize.y, view.bottom);
+  for (let y = view.top; y < bottom; y++) {
+    for (let x = view.left; x < right; x++) {
       if (!mapBuffer[view.realmName][y] || !mapBuffer[view.realmName][y][x]) {
         throw new Error(`Out of bounds ${x}, ${y}, ${view}`);
       }
