@@ -37,14 +37,9 @@ let createEntity;
 function getPlayerSpawnPoint(realmName, sourceRealm) {
   if (sourceRealm) {
     let entities = getEntityByType(realmName, "teleport");
-    console.log(entities);
-    for (let entityId of entities) {
-      console.log(entityId, getEntityById(entityId).properties.destination);
-    }
     entities = entities.filter(
       entityId => getEntityById(entityId).properties.destination == sourceRealm
     );
-    console.log(entities);
     let enterTeleport = getEntityById(util.randomChoice(entities));
     return { x: enterTeleport.x, y: enterTeleport.y };
   } else {
@@ -97,6 +92,13 @@ function pushIntoEntityMap(realmName, x, y, id) {
 }
 
 function isTileWalkable(realmName, x, y) {
+  if (
+    x < 0 ||
+    x >= world[realmName].cols ||
+    y < 0 ||
+    y >= world[realmName].rows
+  )
+    return;
   let entities = getEntityByLocation(realmName, x, y);
   return entities.every(entityId => !getEntityById(entityId).properties.solid);
 }
